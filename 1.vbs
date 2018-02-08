@@ -23,10 +23,14 @@ Set objOutlook = CreateObject("Outlook.Application")
 For Each oAccount In objOutlook.Session.Accounts
   If oaccount ="siarheikalashynskifail2@gmail.com" then
   
-		Set objNamespace = objOutlook.GetNamespace("MAPI")
-		Set objFolder = objNamespace.GetDefaultFolder(6) 'Inbox
+		Set store = oaccount.DeliveryStore
+		Set folder = store.GetDefaultFolder(6) 'here it selects the inbox folder of account.
+		
+		'Set objNamespace = objOutlook.GetNamespace("MAPI")
+		'Set objFolder = objNamespace.GetDefaultFolder(6) 'Inbox
 
-		Set colItems = objFolder.Items
+		'Set colItems = objFolder.Items
+		Set colItems = folder.Items
 		Set colFilteredItems = colItems.Restrict("[Unread]=true")
 		'Set colFilteredItems = colFilteredItems.Restrict("[Subject] = " & Subject)
 
