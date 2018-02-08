@@ -2,8 +2,10 @@ dim SavePath
 dim Subject
 dim FileExtension
 dim k
+dim ReceivedTime
 
 SavePath = "C:\Temp\mails\"
+mailBoxName ="siarheikalashynskifail2@gmail.com"
 
 'open outlook.exe
 Set WshShell = WScript.CreateObject ("WScript.Shell")
@@ -14,6 +16,7 @@ For Each objProcess in colProcessList
 		vFound = True
 	End if
 Next
+
 If vFound = True then
 	WshShell.Run (".exe location")
 End If
@@ -21,31 +24,28 @@ End If
 
 Set objOutlook = CreateObject("Outlook.Application")
 For Each oAccount In objOutlook.Session.Accounts
-  If oaccount ="siarheikalashynskifail2@gmail.com" then
-  
+  If oaccount = mailBoxName then
 		Set store = oaccount.DeliveryStore
 		Set folder = store.GetDefaultFolder(6) 'here it selects the inbox folder of account.
-		
 		'Set objNamespace = objOutlook.GetNamespace("MAPI")
-		'Set objFolder = objNamespace.GetDefaultFolder(6) 'Inbox
-
-		'Set colItems = objFolder.Items
+		'Set folder = objNamespace.GetDefaultFolder(6) 'Inbox
+		'Set colItems = folder.Items
 		Set colItems = folder.Items
 		Set colFilteredItems = colItems.Restrict("[Unread]=true")
 		'Set colFilteredItems = colFilteredItems.Restrict("[Subject] = " & Subject)
 
 		For k = colFilteredItems.Count to 1 step -1
-		  set objMessage  = colFilteredItems.Item(k)
-		  intCount = objMessage.Attachments.Count
-			If intCount > 0 Then
-				For i = 1 To intCount
-					if right(Ucase(objMessage.Attachments.Item(i)),3) = "CSV" then
-						curDate = Year(Date) & "_" & Month(Date) & "_" & Day(Date) & "_" & Hour(Time) & "_" & Minute(Time) & "_" & Second(Time) & "_" & k & ".csv"
-						objMessage.Attachments.Item(i).SaveAsFile SavePath & curDate
-					End If
-				Next
-				objMessage.Unread = False
-			End If
+			set messageObj  = colFilteredItems.Item(k)
+			intCount = messageObj.Attachments.Count
+				If intCount > 0 Then
+					For i = 1 To intCount
+						if right(Ucase(messageObj.Attachments.Item(i)),3) = "CSV" then
+							fileName = Year(messageObj.ReceivedTime) & "_" & Month(messageObj.ReceivedTime) & "_" & Day(messageObj.ReceivedTime) & "_" & Hour(messageObj.ReceivedTime) & "_" & Minute(messageObj.ReceivedTime) & "_" & Second(messageObj.ReceivedTime) & ".csv"
+							messageObj.Attachments.Item(i).SaveAsFile SavePath & fileName
+						End If
+					Next
+					messageObj.Unread = False
+				End If
 		next
   end if
 next
